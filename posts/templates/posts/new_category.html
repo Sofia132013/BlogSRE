@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load user_filters %}
+{% block title %}Новая категория{% endblock %}
+{% block content %}
+    <section class="editor-shell">
+        <div class="editor-heading">
+            <p class="eyebrow">Новая тема</p>
+            <h1>Создать категорию</h1>
+            <p>Категория поможет другим авторам и читателям находить публикации на одну тему.</p>
+        </div>
+        <div class="form-card">
+            <form method="post" action="{% url "new_category" %}">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field|addclass:"form-control" }}
+                        {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+                        {% for error in field.errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+                    </div>
+                {% endfor %}
+                <div class="form-actions">
+                    <button type="submit" class="button">Создать категорию</button>
+                    <a class="text-link" href="{% url "categories" %}">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

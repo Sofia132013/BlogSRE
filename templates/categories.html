@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Категории{% endblock %}
+{% block content %}
+    <section class="feed-hero feed-hero--compact category-hero">
+        <p class="eyebrow">Навигация по темам</p>
+        <h1>Категории</h1>
+        <p class="feed-hero__lead">Выберите интересную тему или создайте новую для своих публикаций.</p>
+        <a class="button" href="{% url "new_category" %}"><span aria-hidden="true">＋</span> Создать категорию</a>
+    </section>
+    <section class="category-grid" aria-label="Список категорий">
+        {% for category in categories %}
+            <a class="category-card" href="{% url "category_posts" category.slug %}">
+                <span class="category-card__mark">#</span>
+                <h2>{{ category.title }}</h2>
+                <p>{{ category.description|default:"Публикации на эту тему." }}</p>
+                <span class="category-card__count">{{ category.post_count }} публикаций <span aria-hidden="true">→</span></span>
+            </a>
+        {% empty %}
+            <div class="empty-state empty-state--action">
+                <p>Категорий пока нет. Создайте первую.</p>
+                <a class="button" href="{% url "new_category" %}"><span aria-hidden="true">＋</span> Создать категорию</a>
+            </div>
+        {% endfor %}
+    </section>
+{% endblock %}

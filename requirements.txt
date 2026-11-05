@@ -1,0 +1,18 @@
+Django==5.2.17
+django-debug-toolbar==8.0.0
+django-prometheus==2.5.0
+gunicorn==26.2.0
+Pillow==12.3.0
+psycopg2-binary==2.9.13
+prometheus-client==0.26.0
+pytest==9.1.1
+pytest-django==4.14.0
+whitenoise==6.12.0
+
+# Resolved transitive dependencies, pinned for reproducible installs.
+asgiref==3.12.1
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+sqlparse==0.6.0

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Категория: {{ group.title }}{% endblock %}
+{% block header %}
+{% endblock %}
+{% block content %}
+    <section class="feed-hero feed-hero--compact">
+        <p class="eyebrow">Категория</p>
+        <h1>{{ group.title }}</h1>
+        <p class="feed-hero__lead">{{ group.description }}</p>
+    </section>
+    <section class="feed-list">
+        {% for post in page %}
+            {% include "includes/post_item.html" with post=post %}
+        {% empty %}
+            <p class="empty-state">В этой категории пока нет публикаций.</p>
+        {% endfor %}
+    </section>
+    {% if page.has_other_pages %}
+        {% include "includes/paginator.html" with items=page paginator=paginator %}
+    {% endif %}
+{% endblock %}

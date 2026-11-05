@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blog-config
+  namespace: blog-sre
+data:
+  DJANGO_DEBUG: "false"
+  DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1,blog-web,blog-web.blog-sre.svc.cluster.local"
+  DJANGO_TIME_ZONE: "Europe/Moscow"
+  POSTGRES_DB: "blog"
+  POSTGRES_USER: "blog"

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Новые истории{% endblock %}
+
+{% block content %}
+    <section class="feed-hero">
+        <p class="eyebrow">Дневник идей</p>
+        <h1>Новые истории</h1>
+        <p class="feed-hero__lead">Люди делятся тем, что любят: маршрутами, книгами, рецептами, технологиями и привычками.</p>
+    </section>
+
+    {% include "includes/menu.html" with index=True %}
+
+    <section class="feed-list" aria-label="Лента публикаций">
+        {% for post in page %}
+            {% include "includes/post_item.html" with post=post %}
+        {% endfor %}
+    </section>
+
+    {% if page.has_other_pages %}
+        {% include "includes/paginator.html" with items=page paginator=paginator%}
+    {% endif %}
+{% endblock %}

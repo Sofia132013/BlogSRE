@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Публикация @{{ author.username }}{% endblock %}
+{% block content %}
+    <div class="profile-layout">
+        <aside class="profile-card profile-card--compact">
+            <span class="avatar avatar--large">{{ author.username|first|upper }}</span>
+            <h2>{% if author.get_full_name %}{{ author.get_full_name }}{% else %}@{{ author.username }}{% endif %}</h2>
+            <p class="profile-card__handle">@{{ author.username }}</p>
+            <div class="profile-stats">
+                <div><strong>{{ count_posts }}</strong><span>публикаций</span></div>
+                <div><strong>{{ author.following.count }}</strong><span>подписчиков</span></div>
+            </div>
+            {% if user.is_authenticated and user != author %}
+                {% if following %}
+                    <form method="post" action="{% url "profile_unfollow" author.username %}">{% csrf_token %}<button class="button button--secondary button--full" type="submit">Отписаться</button></form>
+                {% else %}
+                    <form method="post" action="{% url "profile_follow" author.username %}">{% csrf_token %}<button class="button button--full" type="submit">Подписаться</button></form>
+                {% endif %}
+            {% endif %}
+            <a class="button button--secondary button--full profile-card__link" href="{% url "profile" author.username %}">Профиль автора</a>
+        </aside>
+
+        <article class="post-card post-card--full">
+                    {% if post.image %}
+                        <img class="post-card__image" id="test_id" src="{{ post.image.url }}" alt="Изображение к публикации">
+                    {% endif %}
+            <div class="post-card__body">
+                <div class="post-card__author">
+                    <span class="avatar">{{ author.username|first|upper }}</span>
+                    <div><a href="{% url "profile" username %}" class="post-card__name">@{{ username }}</a><time class="post-card__time">{{ post.pub_date|date:"d.m.Y" }}</time></div>
+                </div>
+                <div class="post-card__text">{{ post.text|linebreaksbr }}</div>
+                {% if user.is_authenticated and user == post.author %}
+                    <div class="post-card__actions">
+                        <a class="post-card__action" href="{% url "post_edit" post.author.username post.id %}">Редактировать</a>
+                        <form class="post-card__delete-form" method="post" action="{% url "post_delete" post.author.username post.id %}">
+                            {% csrf_token %}
+                            <button class="post-card__action post-card__action--danger" type="submit">Удалить</button>
+                        </form>
+                    </div>
+                {% endif %}
+                {% include "includes/comments.html" with post=post items=items %}
+            </div>
+        </article>
+        </div>
+{% endblock %}

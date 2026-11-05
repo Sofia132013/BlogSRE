@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}Новые истории{% endblock %} | Blog</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static "bootstrap/dist/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "blog.css" %}">
+    <script src="{% static "jquery/dist/jquery.min.js" %}"></script>
+    <script src="{% static "bootstrap/dist/js/bootstrap.bundle.min.js" %}"></script>
+</head>
+<body class="site-body">
+{% include "includes/nav.html" %}
+<main class="site-main">
+    <div class="container site-container">
+        {% if request.path != '/' %}
+            <a class="page-back" href="{% url "index" %}"><span aria-hidden="true">←</span> К публикациям</a>
+        {% endif %}
+        {% block content %}
+        {% endblock content %}
+    </div>
+</main>
+{% include "includes/footer.html" %}
+</body>
+</html>

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Ваши подписки{% endblock %}
+{% block content %}
+
+    <section class="feed-hero feed-hero--compact">
+        <p class="eyebrow">Ваша подборка</p>
+        <h1>Избранные авторы</h1>
+        <p class="feed-hero__lead">Все новые записи тех, за кем вы следите.</p>
+    </section>
+    <div>
+        {% include "includes/menu.html" with follow=True %}
+        <section class="feed-list">
+            {% for post in page %}
+                {% include "includes/post_item.html" with post=post %}
+            {% empty %}
+                <p class="empty-state">Подпишитесь на интересных авторов, и их публикации появятся здесь.</p>
+            {% endfor %}
+        </section>
+
+        {% if page.has_other_pages %}
+            {% include "includes/paginator.html" with items=page paginator=paginator %}
+        {% endif %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load user_filters %}
+{% block title %}Войти{% endblock %}
+{% block content %}
+
+    <section class="auth-shell">
+        <div class="auth-intro"><p class="eyebrow">Добро пожаловать</p><h1>Продолжайте делиться идеями</h1><p>Войдите, чтобы писать, обсуждать и собирать любимых авторов в одной ленте.</p></div>
+        <div class="form-card auth-card">
+                <h2>Войти</h2>
+                    {% if form.errors %}
+                        <div class="alert alert-danger" role="alert">
+                            Имя пользователя и пароль не совпадают. Введите правильные данные.
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}">Имя пользователя</label>
+                            <div>
+                                {{ form.username|addclass:"form-control" }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.password.id_for_label }}">Пароль</label>
+                            <div>
+                                {{ form.password|addclass:"form-control" }}
+                            </div>
+                        </div>
+
+                        <div class="form-actions form-actions--split">
+                            <button type="submit" class="button">
+                                Войти
+                            </button>
+                            <a href="{% url 'password_reset' %}" class="text-link">
+                                Забыли пароль?
+                            </a>
+                        </div>
+                    </form>
+                <p class="auth-card__note">Впервые здесь? <a class="text-link" href="{% url 'signup' %}">Создать аккаунт</a></p>
+        </div>
+    </section>
+
+{% endblock %}

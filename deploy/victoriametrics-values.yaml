@@ -1,0 +1,88 @@
+# Official vm/victoria-metrics-single chart, version 0.49.0.
+rbac:
+  create: false
+
+serviceAccount:
+  name: victoriametrics
+
+# Discovery needs only read access to Pods in this namespace.
+extraObjects:
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: victoriametrics-discovery
+      namespace: blog-sre
+    rules:
+      - apiGroups: [""]
+        resources: [pods]
+        verbs: [get, list, watch]
+  - apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: victoriametrics-discovery
+      namespace: blog-sre
+    subjects:
+      - kind: ServiceAccount
+        name: victoriametrics
+        namespace: blog-sre
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: victoriametrics-discovery
+
+server:
+  fullnameOverride: victoriametrics
+  mode: deployment
+  retentionPeriod: 7d
+  persistentVolume:
+    enabled: true
+    storageClassName: standard
+    size: 1Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  extraArgs:
+    memory.allowedBytes: 256MiB
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: false
+  scrape:
+    enabled: true
+    config:
+      global:
+        scrape_interval: 15s
+        scrape_timeout: 10s
+      scrape_configs:
+        - job_name: kubernetes-pods
+          kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                names: [blog-sre]
+          # Django validates Host; pod IPs change and are not in ALLOWED_HOSTS.
+          headers:
+            - "Host: localhost"
+          relabel_configs:
+            - action: keep
+              source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+              regex: "true"
+            - action: keep
+              source_labels: [__meta_kubernetes_pod_phase]
+              regex: Running
+            # Only scrape the annotated port, not PostgreSQL's SQL port as well.
+            - action: keep_if_equal
+              source_labels:
+                - __meta_kubernetes_pod_annotation_prometheus_io_port
+                - __meta_kubernetes_pod_container_port_number
+            - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+              target_label: __metrics_path__
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              target_label: job
+            - source_labels: [__meta_kubernetes_namespace]
+              target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_name]
+              target_label: pod

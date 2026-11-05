@@ -1,0 +1,148 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vector-blog
+  namespace: blog-sre
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vector-blog
+rules:
+  - apiGroups: [""]
+    resources: [pods, namespaces, nodes]
+    verbs: [get, list, watch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vector-blog
+subjects:
+  - kind: ServiceAccount
+    name: vector-blog
+    namespace: blog-sre
+roleRef:
+  kind: ClusterRole
+  name: vector-blog
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-blog
+  namespace: blog-sre
+data:
+  vector.yaml: |
+    data_dir: /var/lib/vector
+    sources:
+      blog:
+        type: kubernetes_logs
+        self_node_name: ${VECTOR_SELF_NODE_NAME}
+        extra_label_selector: app=blog-web
+        extra_namespace_label_selector: kubernetes.io/metadata.name=blog-sre
+    transforms:
+      json:
+        type: remap
+        inputs: [blog]
+        drop_on_error: true
+        drop_on_abort: true
+        source: |
+          # Ignore old text logs and containers outside the Blog web deployment.
+          assert!(.kubernetes.pod_namespace == "blog-sre")
+          assert!(.kubernetes.container_name == "web")
+          event = object!(parse_json!(.message))
+          assert!(event."service.name" == "blog")
+          assert!(is_string(event.timestamp) && is_string(event.level) && is_string(event.message))
+          namespace = .kubernetes.pod_namespace
+          pod = .kubernetes.pod_name
+          container = .kubernetes.container_name
+          . = event
+          ."k8s.namespace.name" = namespace
+          ."k8s.pod.name" = pod
+          ."k8s.container.name" = container
+    sinks:
+      victorialogs:
+        type: http
+        inputs: [json]
+        uri: http://victorialogs.blog-sre.svc.cluster.local:9428/insert/jsonline?_time_field=timestamp&_msg_field=message&_stream_fields=service.name,k8s.namespace.name,k8s.container.name
+        method: post
+        encoding:
+          codec: json
+        framing:
+          method: newline_delimited
+        compression: gzip
+        batch:
+          max_bytes: 1048576
+          timeout_secs: 1
+        buffer:
+          type: disk
+          max_size: 268435488
+          when_full: block
+        healthcheck:
+          enabled: false
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vector-blog
+  namespace: blog-sre
+spec:
+  selector:
+    matchLabels:
+      app: vector-blog
+  template:
+    metadata:
+      labels:
+        app: vector-blog
+    spec:
+      serviceAccountName: vector-blog
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: vector
+          image: timberio/vector:0.58.0-alpine
+          imagePullPolicy: IfNotPresent
+          args: [--config, /etc/vector/vector.yaml]
+          env:
+            - name: VECTOR_SELF_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            runAsUser: 0
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: config
+              mountPath: /etc/vector
+              readOnly: true
+            - name: logs
+              mountPath: /var/log
+              readOnly: true
+            # In this profile, /var/log/pods contains symlinks to Docker logs.
+            - name: docker-logs
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: data
+              mountPath: /var/lib/vector
+      volumes:
+        - name: config
+          configMap:
+            name: vector-blog
+        - name: logs
+          hostPath:
+            path: /var/log
+            type: Directory
+        - name: data
+          hostPath:
+            path: /var/lib/vector-blog
+            type: DirectoryOrCreate
+        - name: docker-logs
+          hostPath:
+            path: /var/lib/docker/containers
+            type: Directory

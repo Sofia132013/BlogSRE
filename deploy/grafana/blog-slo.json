@@ -1,0 +1,781 @@
+{
+  "uid": "blog-slo-sla",
+  "title": "Blog · SLI SLO SLA",
+  "schemaVersion": 39,
+  "version": 1,
+  "tags": [
+    "Blog",
+    "SRE",
+    "SLO"
+  ],
+  "timezone": "browser",
+  "refresh": "15s",
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "SLI: Публикации, окно 2 минуты",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "Успешно сохранённые действия / валидные попытки × 100. Пустая форма и отсутствие входа исключены. Без попыток: No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "100 * sum(increase(blog_posts_created_total{job=\"blog-web\"}[2m])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"post\"}[2m])) > 0)",
+          "legendFormat": "Публикации",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "vector(99.5)",
+          "legendFormat": "SLO 99.5%",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 99.5
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "SLI: Комментарии, окно 2 минуты",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "Успешно сохранённые действия / валидные попытки × 100. Пустая форма и отсутствие входа исключены. Без попыток: No data.",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "100 * sum(increase(blog_comments_created_total{job=\"blog-web\"}[2m])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"comment\"}[2m])) > 0)",
+          "legendFormat": "Комментарии",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "vector(99.5)",
+          "legendFormat": "SLO 99.5%",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 99.5
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "SLI: Регистрации, окно 2 минуты",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "Успешно сохранённые действия / валидные попытки × 100. Пустая форма и отсутствие входа исключены. Без попыток: No data.",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "100 * sum(increase(blog_user_registrations_total{job=\"blog-web\"}[2m])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"registration\"}[2m])) > 0)",
+          "legendFormat": "Регистрации",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "vector(99.5)",
+          "legendFormat": "SLO 99.5%",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 99.5
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "SLI: p95 чтения, SLO ≤ 1 секунды",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "95% просмотров главной и поста укладываются в показанное время. Служебные запросы исключены.",
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.95, sum(rate(django_http_requests_latency_seconds_by_view_method_bucket{job=\"blog-web\",view=~\"index|post_view\",method=\"GET\"}[2m])) by (le))",
+          "legendFormat": "p95",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "vector(1)",
+          "legendFormat": "SLO 1 секунда",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Пробер: доступность и время ответа",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "1 означает выполнение проверки, 0 означает сбой. Хороший интервал требует ответа двух страниц ≤ 1 секунды и свежих данных.",
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "blog_probe_success{job=\"blog-prober\"}",
+          "legendFormat": "HTTP и содержимое, {{target}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "up{job=\"blog-prober\"}",
+          "legendFormat": "Сбор пробера",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "C",
+          "expr": "(\n  (min(last_over_time(blog_probe_round_good{job=\"blog-prober\"}[30s])) default vector(0))\n  * (min(last_over_time(up{job=\"blog-prober\"}[30s])) default vector(0))\n  * ((time() - max(last_over_time(blog_probe_last_run_timestamp_seconds{job=\"blog-prober\"}[30s])) < bool 30) default vector(0))\n) if (count(last_over_time(blog_probe_started_timestamp_seconds{job=\"blog-prober\"}[7d])) > 0)",
+          "legendFormat": "Хороший интервал",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "Пробер: длительность полного ответа",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "",
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "blog_probe_duration_seconds{job=\"blog-prober\"}",
+          "legendFormat": "{{target}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "vector(1)",
+          "legendFormat": "Порог",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Успешность операций (RBSLO, ${sla_window:text})",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "Для каждого действия отдельно: успешные сохранения / валидные попытки. Цель SLA ≥ 99%. Без трафика результат неизвестен.",
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "100 * sum(increase(blog_posts_created_total{job=\"blog-web\"}[$sla_window])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"post\"}[$sla_window])) > 0)",
+          "legendFormat": "Публикации",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "100 * sum(increase(blog_comments_created_total{job=\"blog-web\"}[$sla_window])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"comment\"}[$sla_window])) > 0)",
+          "legendFormat": "Комментарии",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "C",
+          "expr": "100 * sum(increase(blog_user_registrations_total{job=\"blog-web\"}[$sla_window])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"registration\"}[$sla_window])) > 0)",
+          "legendFormat": "Регистрации",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "D",
+          "expr": "vector(99)",
+          "legendFormat": "SLA 99%",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 99
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Доступность чтения (TBSLO, ${sla_window:text})",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "Доля хороших 15-секундных интервалов. Отказ, ответ > 1 с, недоступный пробер и устаревшие данные дают 0. До первого запуска интервалы исключены.",
+      "gridPos": {
+        "x": 12,
+        "y": 24,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "100 * avg_over_time(((\n  (min(last_over_time(blog_probe_round_good{job=\"blog-prober\"}[30s])) default vector(0))\n  * (min(last_over_time(up{job=\"blog-prober\"}[30s])) default vector(0))\n  * ((time() - max(last_over_time(blog_probe_last_run_timestamp_seconds{job=\"blog-prober\"}[30s])) < bool 30) default vector(0))\n) if (count(last_over_time(blog_probe_started_timestamp_seconds{job=\"blog-prober\"}[7d])) > 0))[$sla_window:15s])",
+          "legendFormat": "Доля хорошего времени",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "vector(99)",
+          "legendFormat": "SLA 99%",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 99
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "SLA выполнено: 1 да, 0 нет",
+      "type": "timeseries",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "blog-slo-vm"
+      },
+      "description": "Все три RBSLO и TBSLO должны быть ≥ 99%. Если нет данных о действиях, общего подтверждения нет.",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 12,
+        "h": 8
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "(100 * sum(increase(blog_posts_created_total{job=\"blog-web\"}[$sla_window])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"post\"}[$sla_window])) > 0) >= bool 99) * (100 * sum(increase(blog_comments_created_total{job=\"blog-web\"}[$sla_window])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"comment\"}[$sla_window])) > 0) >= bool 99) * (100 * sum(increase(blog_user_registrations_total{job=\"blog-web\"}[$sla_window])) / (sum(increase(blog_business_attempts_total{job=\"blog-web\",operation=\"registration\"}[$sla_window])) > 0) >= bool 99) * (100 * avg_over_time(((\n  (min(last_over_time(blog_probe_round_good{job=\"blog-prober\"}[30s])) default vector(0))\n  * (min(last_over_time(up{job=\"blog-prober\"}[30s])) default vector(0))\n  * ((time() - max(last_over_time(blog_probe_last_run_timestamp_seconds{job=\"blog-prober\"}[30s])) < bool 30) default vector(0))\n) if (count(last_over_time(blog_probe_started_timestamp_seconds{job=\"blog-prober\"}[7d])) > 0))[$sla_window:15s]) >= bool 99)",
+          "legendFormat": "Все обязательства SLA",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "blog-slo-vm"
+          }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "thresholdsStyle": {
+              "mode": "off"
+            },
+            "lineInterpolation": "stepAfter"
+          },
+          "max": 1,
+          "color": {
+            "mode": "thresholds"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "sla_window",
+        "label": "Окно SLA (2 минуты для показа)",
+        "type": "custom",
+        "query": "2 минуты : 2m, 10 минут : 10m, 30 минут : 30m, 1 час : 1h, 6 часов : 6h",
+        "current": {
+          "text": "1 час",
+          "value": "1h"
+        },
+        "options": [
+          {
+            "text": "2 минуты",
+            "value": "2m",
+            "selected": false
+          },
+          {
+            "text": "10 минут",
+            "value": "10m",
+            "selected": false
+          },
+          {
+            "text": "30 минут",
+            "value": "30m",
+            "selected": false
+          },
+          {
+            "text": "1 час",
+            "value": "1h",
+            "selected": true
+          },
+          {
+            "text": "6 часов",
+            "value": "6h",
+            "selected": false
+          }
+        ]
+      }
+    ]
+  }
+}

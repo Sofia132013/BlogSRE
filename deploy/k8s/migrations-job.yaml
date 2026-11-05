@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: blog-migrate
+  namespace: blog-sre
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: blog:local
+          imagePullPolicy: Never
+          command: [python, manage.py, migrate, --noinput]
+          envFrom:
+            - configMapRef:
+                name: blog-config
+            - secretRef:
+                name: django-secrets
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

@@ -1,0 +1,42 @@
+<article class="post-card">
+    {% if post.image %}
+        <img class="post-card__image" src="{{ post.image.url }}" alt="Изображение к публикации @{{ post.author }}">
+    {% endif %}
+    <div class="post-card__body">
+        <div class="post-card__author">
+            <span class="avatar">{{ post.author.username|first|upper }}</span>
+            <div>
+                <a name="post_{{ post.id }}" href="{% url "profile" post.author.username %}" class="post-card__name">@{{ post.author }}</a>
+                <time class="post-card__time" datetime="{{ post.pub_date|date:'c' }}">{{ post.pub_date|date:"d.m.Y" }}</time>
+            </div>
+        </div>
+        <div class="post-card__text">{{ post.text|linebreaksbr }}</div>
+
+        {% if post.group %}
+            <a class="topic-tag" href="{% url "category_posts" post.group.slug %}">#{{ post.group.title }}</a>
+        {% endif %}
+
+        <div class="post-card__actions">
+            <div>
+                <a class="post-card__action" href="{% url "post_view" post.author.username post.id %}">
+                    {% if post.comments.exists %}
+                        {{ post.comments.count }} комментариев
+                    {% else%}
+                        Обсудить
+                    {% endif %}
+                </a>
+
+                {% if user == post.author %}
+                    <a class="post-card__action" href="{% url "post_edit" post.author.username post.id %}">
+                        Редактировать
+                    </a>
+                    <form class="post-card__delete-form" method="post" action="{% url "post_delete" post.author.username post.id %}">
+                        {% csrf_token %}
+                        <button class="post-card__action post-card__action--danger" type="submit">Удалить</button>
+                    </form>
+                {% endif %}
+            </div>
+            <a class="post-card__read" href="{% url "post_view" post.author.username post.id %}">Читать <span aria-hidden="true">→</span></a>
+        </div>
+    </div>
+</article>

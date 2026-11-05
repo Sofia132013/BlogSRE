@@ -1,0 +1,20 @@
+{
+  "spec": {
+    "template": {
+      "spec": {
+        "volumes": [
+          {"name": "blog-slo-provisioning", "configMap": {"name": "blog-slo-provisioning"}},
+          {"name": "blog-slo-dashboard", "configMap": {"name": "blog-slo-dashboard"}}
+        ],
+        "containers": [{
+          "name": "grafana",
+          "volumeMounts": [
+            {"mountPath": "/etc/grafana/provisioning/datasources/blog-slo.yaml", "$patch": "delete"},
+            {"name": "blog-slo-provisioning", "mountPath": "/etc/grafana/provisioning/dashboards/blog-slo.yaml", "subPath": "provider.yaml", "readOnly": true},
+            {"name": "blog-slo-dashboard", "mountPath": "/var/lib/grafana/blog-slo-dashboards", "readOnly": true}
+          ]
+        }]
+      }
+    }
+  }
+}

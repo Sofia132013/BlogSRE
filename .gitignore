@@ -1,0 +1,36 @@
+.git/*
+env/
+venv/
+.venv
+.venv/
+.env
+.env.*
+!.env.example
+
+# Local Kubernetes credentials; commit only the example.
+deploy/secret.yaml
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+.idea
+.DS_Store
+.AppleDouble
+.LSOverride
+
+*.sublime-project
+*.sublime-workspace
+
+static/
+staticfiles/
+posts/static/
+media/
+
+sent_emails/
+artifacts/
+
+# Local assignment reports are not part of the application.
+/Отчёт*.md
+/Проверки.md
+/Скринкаст.md

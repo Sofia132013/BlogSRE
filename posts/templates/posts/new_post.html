@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}
+    {% if is_edit %}
+        Редактирование записи
+    {% else %}
+        Новая запись
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% load user_filters %}
+    <section class="editor-shell">
+        <div class="editor-heading">
+            <p class="eyebrow">Ваша история</p>
+            <h1>{% if is_edit %}Редактировать запись{% else %}Новая запись{% endif %}</h1>
+            <p>Поделитесь тем, что вам интересно прямо сейчас.</p>
+        </div>
+        <div class="form-card">
+                    <form method="post" enctype="multipart/form-data" action="
+                            {% if is_edit %}{% url "post_edit" user.username post.pk %}{% else %}{% url "new_post" %}{% endif %}">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                <div>
+                                    {{ field|addclass:"form-control" }}
+                                    {% if field.help_text %}
+                                        <small id="{{ field.id_for_label }}-help"
+                                               class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        <div class="form-actions">
+                            <button type="submit" class="button">
+                                {% if is_edit %}Сохранить изменения{% else %}Опубликовать{% endif %}
+                            </button>
+                        </div>
+                    </form>
+        </div>
+    </section>
+{% endblock %}

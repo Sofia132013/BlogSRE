@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}@{{ profile.username }}{% endblock %}
+{% block content %}
+    <div class="profile-layout">
+        <aside class="profile-card">
+            <span class="avatar avatar--large">{{ profile.username|first|upper }}</span>
+            <h1>{% if profile.get_full_name %}{{ profile.get_full_name }}{% else %}@{{ profile.username }}{% endif %}</h1>
+            <p class="profile-card__handle">@{{ profile.username }}</p>
+            <div class="profile-stats">
+                <div><strong>{{ count_posts }}</strong><span>публикаций</span></div>
+                <div><strong>{{ profile.following.count }}</strong><span>подписчиков</span></div>
+                <div><strong>{{ profile.follower.count }}</strong><span>подписок</span></div>
+            </div>
+            {% if user.is_authenticated and user != author %}
+                {% if following %}
+                    <form method="post" action="{% url "profile_unfollow" author.username %}">{% csrf_token %}<button class="button button--secondary button--full" type="submit">Отписаться</button></form>
+                {% else %}
+                    <form method="post" action="{% url "profile_follow" author.username %}">{% csrf_token %}<button class="button button--full" type="submit">Подписаться</button></form>
+                {% endif %}
+            {% elif user == author %}
+                <a class="button button--full" href="{% url "new_post" %}"><span aria-hidden="true">＋</span> Написать пост</a>
+            {% endif %}
+        </aside>
+
+        <section class="feed-list profile-feed">
+            <div class="section-heading"><p class="eyebrow">Профиль автора</p><h2>Публикации</h2></div>
+            {% for post in page %}
+                {% include "includes/post_item.html" with post=post %}
+            {% empty %}
+                {% if user == author %}
+                    <div class="empty-state empty-state--action">
+                        <p>Здесь появятся ваши публикации.</p>
+                        <a class="button" href="{% url "new_post" %}"><span aria-hidden="true">＋</span> Написать первый пост</a>
+                    </div>
+                {% else %}
+                    <p class="empty-state">У автора пока нет публикаций.</p>
+                {% endif %}
+            {% endfor %}
+            {% if page.has_other_pages %}
+                {% include "includes/paginator.html" with items=page paginator=paginator %}
+            {% endif %}
+        </section>
+        </div>
+{% endblock %}

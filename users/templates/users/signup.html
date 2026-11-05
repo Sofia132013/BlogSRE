@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Зарегистрироваться{% endblock %}
+{% block content %}
+    {% load user_filters %}
+
+    <section class="auth-shell">
+        <div class="auth-intro"><p class="eyebrow">Ваша площадка</p><h1>Начните свою историю</h1><p>Здесь можно писать о том, что интересно именно вам, и находить единомышленников.</p></div>
+        <div class="form-card auth-card">
+                <h2>Создать аккаунт</h2>
+
+                    {% if form.errors %}
+                        {% for error in form.errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" action="{% url 'signup' %}">
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            <div class="form-group" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
+                            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span class="required">*</span>{% endif %}</label>
+                            <div>
+
+
+                                {{ field|addclass:"form-control" }}
+
+                                {% if field.help_text %}
+                                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                {% endif %}
+                            </div>
+                            </div>
+                        {% endfor %}
+
+                <div class="form-actions">
+                    <button type="submit" class="button">
+                        Создать аккаунт
+                    </button>
+                </div>
+                </form>
+                <p class="auth-card__note">Уже есть аккаунт? <a class="text-link" href="{% url 'login' %}">Войти</a></p>
+        </div>
+    </section>
+
+{% endblock %}

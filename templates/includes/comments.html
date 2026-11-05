@@ -1,0 +1,31 @@
+{% load user_filters %}
+
+<section class="comments" aria-label="Комментарии">
+    <h2 class="comments__title">Комментарии{% if comments %} <span>{{ comments|length }}</span>{% endif %}</h2>
+
+    <div class="comments__list">
+        {% for item in comments %}
+            <article class="comment">
+                <span class="avatar">{{ item.author.username|first|upper }}</span>
+                <div class="comment__body">
+                    <a href="{% url "profile" item.author %}" name="comment_{{ item.id }}" class="comment__author">@{{ item.author }}</a>
+                    <p>{{ item.text|linebreaksbr }}</p>
+                </div>
+            </article>
+        {% empty %}
+            <p class="comments__empty">Пока нет комментариев. Начните обсуждение.</p>
+        {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+        <form class="comment-form" action="{% url "add_comment" post.author.username post.id %}" method="post" novalidate>
+            {% csrf_token %}
+            <label for="{{ form.text.id_for_label }}">Ваш комментарий</label>
+            {{ form.text|addclass:"form-control" }}
+            {% for error in form.text.errors %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endfor %}
+            <button type="submit" class="button">Отправить комментарий</button>
+        </form>
+    {% else %}
+        <p class="comments__login"><a class="text-link" href="{% url 'login' %}?next={{ request.path }}">Войдите</a>, чтобы оставить комментарий.</p>
+    {% endif %}
+</section>
